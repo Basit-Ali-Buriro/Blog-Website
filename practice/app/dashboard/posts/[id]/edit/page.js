@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import dbConnect from "@/lib/db/mongodb";
 import Post from "@/lib/models/Post";
 import EditPostForm from "@/app/components/EditPostForm";
+import Link from "next/link";
 
 async function getPost(postId) {
   await dbConnect();
@@ -36,17 +37,27 @@ export default async function EditPostPage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <header className="bg-blue-600 shadow">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-white">Edit Post</h1>
+      <header className="bg-white shadow-md border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Edit Post</h1>
+              <p className="text-gray-600 text-sm">Make changes to your post</p>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-xl shadow-lg p-8">
           <EditPostForm post={post} />
         </div>
       </main>
