@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs";
 import dbConnect from "@/lib/db/mongodb";
 import User from "@/lib/models/User";
 
-const handler = NextAuth({
+export const authOptions = {
     providers: [
         Credentials({
             name: "Credentials",
@@ -68,6 +68,8 @@ const handler = NextAuth({
         maxAge: 7 * 24 * 60 * 60, // 7 days
     },
     secret: process.env.NEXTAUTH_SECRET,
-})
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
