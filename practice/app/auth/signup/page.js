@@ -62,7 +62,7 @@ export default function SignupPage() {
       // Show success toast and redirect
       setToast({ message: 'Account created successfully! Redirecting to login...', type: 'success' });
       setTimeout(() => {
-        router.push('/auth/login');
+        router.push('/auth/signup');
       }, 2000);
     } catch (err) {
       setError('An error occurred. Please try again.');

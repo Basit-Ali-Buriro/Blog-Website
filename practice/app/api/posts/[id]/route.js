@@ -4,6 +4,37 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import dbConnect from "@/lib/db/mongodb";
 import Post from "@/lib/models/Post";
 
+// GET - Fetch a single post by ID
+export async function GET(request, { params }) {
+  try {
+    const { id } = await params;
+
+    // Connect to database
+    await dbConnect();
+
+    // Find post
+    const post = await Post.findById(id).populate("author", "name email");
+
+    if (!post) {
+      return NextResponse.json(
+        { message: "Post not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { post },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Post fetch error:", error);
+    return NextResponse.json(
+      { message: "An error occurred while fetching the post" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(request, { params }) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +46,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { title, content, published } = await request.json();
 
     // Validation
@@ -96,7 +127,7 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Connect to database
     await dbConnect();

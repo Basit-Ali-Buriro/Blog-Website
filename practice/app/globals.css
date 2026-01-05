@@ -6,8 +6,8 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #ffffff;
+  --color-foreground: #171717;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -21,7 +21,7 @@
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: #171717;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
@@ -113,14 +113,112 @@ textarea:focus {
 }
 
 /* Gradient backgrounds */
-.gradient-blue {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.gradient-blue,
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
 }
 
-.gradient-green {
-  background: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%);
+.gradient-green,
+.bg-gradient-green {
+  background: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%) !important;
 }
 
-.gradient-orange {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.gradient-orange,
+.bg-gradient-orange {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+/* Ensure text visibility on light backgrounds */
+.text-gray-900 {
+  color: #111827 !important;
+}
+
+.text-gray-700 {
+  color: #374151 !important;
+}
+
+.text-gray-600 {
+  color: #4b5563 !important;
+}
+
+.text-gray-500 {
+  color: #6b7280 !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+/* Button base styles for visibility */
+button {
+  color: inherit;
+}
+
+/* Ensure white backgrounds are visible */
+.bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Input placeholder colors */
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Border colors */
+.border-gray-100 {
+  border-color: #f3f4f6 !important;
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+.border-gray-300 {
+  border-color: #d1d5db !important;
+}
+
+/* Background colors */
+.bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+
+.bg-blue-50 {
+  background-color: #eff6ff !important;
+}
+
+.bg-purple-50 {
+  background-color: #faf5ff !important;
+}
+
+/* Background gradients for pages */
+.bg-linear-to-br {
+  background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.from-blue-50 {
+  --tw-gradient-from: #eff6ff;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);
+}
+
+.from-purple-50 {
+  --tw-gradient-from: #faf5ff;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);
+}
+
+.from-gray-50 {
+  --tw-gradient-from: #f9fafb;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);
+}
+
+.to-blue-50 {
+  --tw-gradient-to: #eff6ff;
+}
+
+.to-purple-50 {
+  --tw-gradient-to: #faf5ff;
 }
