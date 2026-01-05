@@ -62,7 +62,7 @@ export default function SignupPage() {
       // Show success toast and redirect
       setToast({ message: 'Account created successfully! Redirecting to login...', type: 'success' });
       setTimeout(() => {
-        router.push('/auth/signup');
+        router.push('/auth/login');
       }, 2000);
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -72,10 +72,10 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-purple-50 to-blue-50">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 px-4">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fade-in border border-gray-100">
+
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fade-in border border-gray-100">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-blue rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

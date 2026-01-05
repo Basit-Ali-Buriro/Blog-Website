@@ -12,8 +12,12 @@ export async function GET(request, { params }) {
     // Connect to database
     await dbConnect();
 
-    // Find post
-    const post = await Post.findById(id).populate("author", "name email");
+    // Find post and increment views
+    const post = await Post.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } },
+      { new: true }
+    ).populate("author", "name email");
 
     if (!post) {
       return NextResponse.json(
@@ -47,7 +51,7 @@ export async function PUT(request, { params }) {
     }
 
     const { id } = await params;
-    const { title, content, published } = await request.json();
+    const { title, content, published, excerpt, tags, featuredImage, status, metaDescription } = await request.json();
 
     // Validation
     if (!title || !content) {
@@ -67,6 +71,14 @@ export async function PUT(request, { params }) {
     if (content.length < 10) {
       return NextResponse.json(
         { message: "Content must be at least 10 characters" },
+        { status: 400 }
+      );
+    }
+
+    // Validate tags if provided
+    if (tags && (!Array.isArray(tags) || tags.length > 10)) {
+      return NextResponse.json(
+        { message: "Tags must be an array with maximum 10 items" },
         { status: 400 }
       );
     }
@@ -92,10 +104,23 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // Update post
+    // Determine post status
+    let postStatus = status || post.status;
+    if (published !== undefined) {
+      // Backward compatibility: if published is provided, use it
+      postStatus = published ? 'published' : 'draft';
+    }
+
+    // Update post fields
     post.title = title.trim();
     post.content = content.trim();
-    post.published = published;
+    post.status = postStatus;
+
+    // Update optional fields if provided
+    if (excerpt !== undefined) post.excerpt = excerpt?.trim();
+    if (tags !== undefined) post.tags = tags;
+    if (featuredImage !== undefined) post.featuredImage = featuredImage?.trim() || '';
+    if (metaDescription !== undefined) post.metaDescription = metaDescription?.trim();
 
     await post.save();
     await post.populate("author", "name email");

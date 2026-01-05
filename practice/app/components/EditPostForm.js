@@ -9,6 +9,11 @@ import Toast from './Toast';
 export default function EditPostForm({ post }) {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
+  const [excerpt, setExcerpt] = useState(post.excerpt || '');
+  const [featuredImage, setFeaturedImage] = useState(post.featuredImage || '');
+  const [tags, setTags] = useState((post.tags || []).join(', '));
+  const [metaDescription, setMetaDescription] = useState(post.metaDescription || '');
+  const [status, setStatus] = useState(post.status || 'draft');
   const [published, setPublished] = useState(post.published);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,6 +37,18 @@ export default function EditPostForm({ post }) {
 
     setLoading(true);
 
+    // Parse tags from comma-separated string
+    const tagArray = tags
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0);
+
+    if (tagArray.length > 10) {
+      setError('Maximum 10 tags allowed');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`/api/posts/${post._id}`, {
         method: 'PUT',
@@ -41,7 +58,11 @@ export default function EditPostForm({ post }) {
         body: JSON.stringify({
           title,
           content,
-          published,
+          excerpt: excerpt || undefined,
+          featuredImage: featuredImage || undefined,
+          tags: tagArray.length > 0 ? tagArray : undefined,
+          metaDescription: metaDescription || undefined,
+          status,
         }),
       });
 
@@ -94,7 +115,7 @@ export default function EditPostForm({ post }) {
   return (
     <>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      
+
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -111,7 +132,7 @@ export default function EditPostForm({ post }) {
               </div>
             </div>
             <p className="text-gray-700 mb-6">
-              Are you sure you want to delete "<strong>{post.title}</strong>"? This will permanently remove the post and all its data.
+              Are you sure you want to delete &quot;<strong>{post.title}</strong>&quot;? This will permanently remove the post and all its data.
             </p>
             <div className="flex gap-3">
               <button
@@ -142,13 +163,12 @@ export default function EditPostForm({ post }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all text-black text-lg ${
-              titleLength > 0 && !titleValid
-                ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                : titleValid
+            className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all text-black text-lg ${titleLength > 0 && !titleValid
+              ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+              : titleValid
                 ? 'border-green-300 focus:border-green-500 focus:ring-2 focus:ring-green-200'
                 : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-            }`}
+              }`}
             placeholder="Enter an engaging title for your post"
           />
           <div className="flex justify-between items-center mt-2">
@@ -169,13 +189,12 @@ export default function EditPostForm({ post }) {
             onChange={(e) => setContent(e.target.value)}
             required
             rows={12}
-            className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all text-black resize-y ${
-              contentLength > 0 && !contentValid
-                ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                : contentValid
+            className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all text-black resize-y ${contentLength > 0 && !contentValid
+              ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+              : contentValid
                 ? 'border-green-300 focus:border-green-500 focus:ring-2 focus:ring-green-200'
                 : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-            }`}
+              }`}
             placeholder="Write your amazing content here..."
           />
           <div className="flex justify-between items-center mt-2">
@@ -187,6 +206,73 @@ export default function EditPostForm({ post }) {
               {contentLength} characters, ~{Math.ceil(contentLength / 5)} words
             </span>
           </div>
+        </div>
+
+        {/* Excerpt Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-900 mb-2">
+            Excerpt (Optional)
+          </label>
+          <textarea
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            rows={3}
+            maxLength={300}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-black resize-y"
+            placeholder="Brief summary of your post"
+          />
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            {excerpt.length}/300 characters
+          </p>
+        </div>
+
+        {/* Featured Image URL */}
+        <div>
+          <label className="block text-sm font-medium text-gray-900 mb-2">
+            Featured Image URL (Optional)
+          </label>
+          <input
+            type="url"
+            value={featuredImage}
+            onChange={(e) => setFeaturedImage(e.target.value)}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-black"
+            placeholder="https://example.com/image.jpg"
+          />
+        </div>
+
+        {/* Tags Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-900 mb-2">
+            Tags (Optional)
+          </label>
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-black"
+            placeholder="javascript, web development, tutorial"
+          />
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            {tags.split(',').filter(t => t.trim()).length}/10 tags (comma-separated)
+          </p>
+        </div>
+
+        {/* Meta Description */}
+        <div>
+          <label className="block text-sm font-medium text-gray-900 mb-2">
+            Meta Description (Optional)
+          </label>
+          <textarea
+            value={metaDescription}
+            onChange={(e) => setMetaDescription(e.target.value)}
+            rows={2}
+            maxLength={160}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-black resize-y"
+            placeholder="SEO description for search engines"
+          />
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            {metaDescription.length}/160 characters
+          </p>
         </div>
 
         {/* Preview Section */}
@@ -210,26 +296,54 @@ export default function EditPostForm({ post }) {
           </div>
         )}
 
-        {/* Published Checkbox */}
+        {/* Status Selection */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <input
-              type="checkbox"
-              id="published"
-              checked={published}
-              onChange={(e) => setPublished(e.target.checked)}
-              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-0.5"
-            />
-            <div>
-              <label htmlFor="published" className="text-sm font-medium text-gray-900 cursor-pointer">
-                Published
-              </label>
-              <p className="text-sm text-gray-600 mt-1">
-                {published 
-                  ? '✓ This post is visible to everyone'
-                  : 'This post is saved as a draft'}
-              </p>
-            </div>
+          <label className="block text-sm font-medium text-gray-900 mb-3">
+            Post Status
+          </label>
+          <div className="space-y-2">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="radio"
+                name="status"
+                value="draft"
+                checked={status === 'draft'}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-4 h-4 text-blue-600"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">Draft</span>
+                <p className="text-xs text-gray-600">Not visible to others</p>
+              </div>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="radio"
+                name="status"
+                value="published"
+                checked={status === 'published'}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-4 h-4 text-blue-600"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">Published</span>
+                <p className="text-xs text-gray-600">Visible to everyone</p>
+              </div>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="radio"
+                name="status"
+                value="archived"
+                checked={status === 'archived'}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-4 h-4 text-blue-600"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">Archived</span>
+                <p className="text-xs text-gray-600">Hidden from public view</p>
+              </div>
+            </label>
           </div>
         </div>
 
@@ -264,7 +378,7 @@ export default function EditPostForm({ post }) {
               </>
             )}
           </button>
-          
+
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}

@@ -3,8 +3,8 @@ import Providers from "./components/Providers";
 
 
 export const metadata = {
-  title: "My Blog",
-  description: "A modern blog platform built with Next.js and MongoDB",
+  title: "BlogSpace - Share Your Stories",
+  description: "A modern full-stack blog platform with rich features including tags, SEO optimization, reading time estimates, and more. Built with Next.js, MongoDB, and Tailwind CSS.",
 };
 
 export default function RootLayout({ children }) {

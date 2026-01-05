@@ -17,7 +17,7 @@ export async function POST(request) {
     }
 
     // Parse request body
-    const { title, content, published } = await request.json();
+    const { title, content, published, excerpt, tags, featuredImage, status, metaDescription } = await request.json();
 
     // Validation
     if (!title || !content) {
@@ -41,15 +41,34 @@ export async function POST(request) {
       );
     }
 
+    // Validate tags if provided
+    if (tags && (!Array.isArray(tags) || tags.length > 10)) {
+      return NextResponse.json(
+        { message: "Tags must be an array with maximum 10 items" },
+        { status: 400 }
+      );
+    }
+
     // Connect to database
     await dbConnect();
+
+    // Determine post status
+    let postStatus = status || 'draft';
+    if (published !== undefined) {
+      // Backward compatibility: if published is provided, use it
+      postStatus = published ? 'published' : 'draft';
+    }
 
     // Create new post
     const newPost = new Post({
       title: title.trim(),
       content: content.trim(),
       author: session.user.id,
-      published: published || false,
+      status: postStatus,
+      excerpt: excerpt?.trim(),
+      tags: tags || [],
+      featuredImage: featuredImage?.trim() || '',
+      metaDescription: metaDescription?.trim(),
     });
 
     // Save post
