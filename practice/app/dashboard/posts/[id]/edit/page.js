@@ -9,11 +9,11 @@ import Link from "next/link";
 async function getPost(postId) {
   await dbConnect();
   const post = await Post.findById(postId).populate("author", "name email");
-  
+
   if (!post) {
     return null;
   }
-  
+
   return JSON.parse(JSON.stringify(post));
 }
 
@@ -24,7 +24,7 @@ export default async function EditPostPage({ params }) {
     redirect("/auth/login");
   }
 
-  const { id } = params;
+  const { id } = await params;
   const post = await getPost(id);
 
   if (!post) {
@@ -37,7 +37,7 @@ export default async function EditPostPage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
       <header className="bg-white shadow-md border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 py-4">

@@ -98,7 +98,7 @@ export async function GET(request) {
     await dbConnect();
 
     // Get all published posts
-    const posts = await Post.find({ published: true })
+    const posts = await Post.find({ status: 'published' })
       .populate("author", "name email")
       .sort({ createdAt: -1 });
 

@@ -92,7 +92,7 @@ const postSchema = new mongoose.Schema(
 );
 
 // Pre-save middleware to auto-generate slug and reading time
-postSchema.pre('save', function (next) {
+postSchema.pre('save', function () {
   // Generate slug from title if not provided
   if (!this.slug && this.title) {
     this.slug = generateSlug(this.title);
@@ -115,12 +115,9 @@ postSchema.pre('save', function (next) {
 
   // Sync published field with status for backward compatibility
   this.published = this.status === 'published';
-
-  next();
 });
 
-// Index for better query performance
-postSchema.index({ slug: 1 });
+// Index for better query performance (slug index is already defined in schema with unique: true)
 postSchema.index({ status: 1, createdAt: -1 });
 postSchema.index({ tags: 1 });
 postSchema.index({ author: 1, status: 1 });

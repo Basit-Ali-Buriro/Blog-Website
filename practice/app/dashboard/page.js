@@ -16,10 +16,11 @@ async function getUserPosts(userId) {
 async function getStats(userId) {
   await dbConnect();
   const totalPosts = await Post.countDocuments({ author: userId });
-  const publishedPosts = await Post.countDocuments({ author: userId, published: true });
-  const draftPosts = totalPosts - publishedPosts;
+  const publishedPosts = await Post.countDocuments({ author: userId, status: 'published' });
+  const draftPosts = await Post.countDocuments({ author: userId, status: 'draft' });
+  const archivedPosts = await Post.countDocuments({ author: userId, status: 'archived' });
 
-  return { totalPosts, publishedPosts, draftPosts };
+  return { totalPosts, publishedPosts, draftPosts, archivedPosts };
 }
 
 export default async function DashboardPage() {
